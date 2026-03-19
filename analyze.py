@@ -212,6 +212,16 @@ def generate_report(results: list[dict], downloads: pd.DataFrame, output_path: P
     print(f"Report written to {output_path}")
 
 
+def generate_package_lists(results: list[dict], output_dir: Path):
+    """Write a text file per threshold with the full package closure, one per line."""
+    for r in results:
+        pct = int(r["threshold"] * 100)
+        all_packages = sorted(set(r["top_packages"]) | set(r["transitive_deps"]))
+        path = output_dir / f"{pct}_coverage.txt"
+        path.write_text("\n".join(all_packages) + "\n")
+        print(f"  Package list written to {path}")
+
+
 def main():
     downloads_path = DATA_DIR / "downloads.csv"
     deps_path = DATA_DIR / "deps.csv"
@@ -242,6 +252,7 @@ def main():
 
     REPORT_DIR.mkdir(exist_ok=True)
     generate_report(results, downloads, REPORT_DIR / "results.md")
+    generate_package_lists(results, REPORT_DIR)
 
 
 if __name__ == "__main__":

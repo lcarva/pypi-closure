@@ -68,7 +68,9 @@ Saves results to `data/downloads.csv` and `data/deps.csv`.
 ```
 
 Reads the CSVs, builds the dependency graph, computes transitive closures at
-80/90/95% coverage thresholds, and writes a report to `report/results.md`.
+80/90/95% coverage thresholds, and writes:
+- `report/results.md` — human-readable report
+- `report/80_coverage.txt`, `report/90_coverage.txt`, `report/95_coverage.txt` — machine-readable package lists (one package per line) containing the full closure for each threshold
 
 **Run tests**
 

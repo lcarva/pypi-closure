@@ -7,12 +7,34 @@ import pandas as pd
 from analyze import (
     build_dependency_graph,
     compute_coverage_sets,
+    generate_package_lists,
     generate_report,
     load_deps,
     load_downloads,
     parse_requires_dist,
     transitive_closure,
 )
+
+
+class TestPackageLists:
+    def test_generates_coverage_files(self, tmp_path):
+        results = [{
+            "threshold": 0.85,
+            "top_packages_count": 2,
+            "transitive_deps_count": 1,
+            "total_closure_size": 3,
+            "top_packages_downloads": 850,
+            "closure_downloads": 900,
+            "closure_coverage": 0.90,
+            "total_downloads": 1000,
+            "top_packages": ["a", "b"],
+            "transitive_deps": ["c"],
+        }]
+        generate_package_lists(results, tmp_path)
+        path = tmp_path / "85_coverage.txt"
+        assert path.exists()
+        packages = path.read_text().strip().split("\n")
+        assert sorted(packages) == ["a", "b", "c"]
 
 
 class TestParseRequiresDist:

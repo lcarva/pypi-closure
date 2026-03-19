@@ -15,6 +15,17 @@ REPORT_DIR = Path(__file__).parent / "report"
 
 COVERAGE_THRESHOLDS = [0.80, 0.90, 0.95]
 
+# Environment dict for evaluating PEP 508 markers as Linux + Python 3.12
+_LINUX_ENV = {
+    "os_name": "posix",
+    "sys_platform": "linux",
+    "platform_system": "Linux",
+    "platform_machine": "x86_64",
+    "implementation_name": "cpython",
+    "python_version": "3.12",
+    "python_full_version": "3.12.0",
+}
+
 
 def normalize_name(name: str) -> str:
     """PEP 503 normalize a package name."""
@@ -53,11 +64,14 @@ def parse_requires_dist(raw: str) -> list[str]:
         except Exception:
             continue
 
-        # Skip extras-only dependencies
+        # Skip extras-only and non-Linux platform dependencies
         if req.marker:
             marker_str = str(req.marker)
             # Skip if the marker requires an extra
-            if "extra ==" in marker_str or "extra ==" in marker_str or "extra==" in marker_str:
+            if "extra ==" in marker_str or "extra==" in marker_str:
+                continue
+            # Evaluate platform markers against a Linux environment
+            if not req.marker.evaluate(_LINUX_ENV):
                 continue
 
         deps.append(normalize_name(req.name))

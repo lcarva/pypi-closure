@@ -27,17 +27,18 @@ FORMAT CSVWithNames
 """
 
 # Dependencies: latest version's requires_dist for a batch of packages.
-# Uses argMax to pick the most recently uploaded version, filtered to only
-# rows that actually have requires_dist populated.
+# Uses argMax to pick the truly latest version, with argMaxIf to get the
+# most recent requires_dist that is populated (avoiding stale data from
+# older versions when the latest has empty requires_dist).
 DEPS_QUERY_TEMPLATE = """\
 SELECT
     name,
     argMax(version, upload_time) AS latest_version,
-    argMax(requires_dist, upload_time) AS deps
+    argMaxIf(requires_dist, upload_time, length(requires_dist) > 0) AS deps
 FROM pypi.projects
 WHERE name IN ({placeholders})
-AND length(requires_dist) > 0
 GROUP BY name
+HAVING length(deps) > 0
 FORMAT CSVWithNames
 """
 

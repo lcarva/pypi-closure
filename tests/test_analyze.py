@@ -47,11 +47,17 @@ class TestParseRequiresDist:
         result = parse_requires_dist(raw)
         assert result == ["requests"]
 
-    def test_platform_markers_kept(self):
+    def test_non_linux_platform_filtered(self):
         raw = "['pywin32 ; sys_platform == \"win32\"', 'uvloop ; sys_platform != \"win32\"']"
         result = parse_requires_dist(raw)
-        assert "pywin32" in result
-        assert "uvloop" in result
+        assert "pywin32" not in result
+        assert "uvloop" in result  # != "win32" is true on linux
+
+    def test_linux_platform_kept(self):
+        raw = "['setproctitle ; sys_platform == \"linux\"', 'cffi ; os_name == \"posix\"']"
+        result = parse_requires_dist(raw)
+        assert "setproctitle" in result
+        assert "cffi" in result
 
     def test_empty(self):
         assert parse_requires_dist("") == []

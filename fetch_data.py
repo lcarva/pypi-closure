@@ -81,7 +81,7 @@ def fetch_deps(packages: list[str], output_path: Path) -> int:
 
     for i in range(0, len(packages), DEPS_BATCH_SIZE):
         batch = packages[i : i + DEPS_BATCH_SIZE]
-        placeholders = ", ".join(f"'{pkg}'" for pkg in batch)
+        placeholders = ", ".join(f"'{pkg.replace(chr(39), chr(39)*2)}'" for pkg in batch)
         query = DEPS_QUERY_TEMPLATE.format(placeholders=placeholders)
 
         batch_num = i // DEPS_BATCH_SIZE + 1

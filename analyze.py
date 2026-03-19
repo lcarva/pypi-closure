@@ -2,6 +2,7 @@
 
 import ast
 import csv
+import re
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -15,11 +16,16 @@ REPORT_DIR = Path(__file__).parent / "report"
 COVERAGE_THRESHOLDS = [0.80, 0.90, 0.95]
 
 
+def normalize_name(name: str) -> str:
+    """PEP 503 normalize a package name."""
+    return re.sub(r"[-_.]+", "-", name).lower()
+
+
 def load_downloads(path: Path) -> pd.DataFrame:
     """Load download counts CSV into a DataFrame."""
     df = pd.read_csv(path)
     df.columns = ["project", "downloads"]
-    df["project"] = df["project"].str.strip().str.lower()
+    df["project"] = df["project"].str.strip().apply(normalize_name)
     df = df.groupby("project", as_index=False)["downloads"].sum()
     df = df.sort_values("downloads", ascending=False).reset_index(drop=True)
     return df
@@ -51,10 +57,10 @@ def parse_requires_dist(raw: str) -> list[str]:
         if req.marker:
             marker_str = str(req.marker)
             # Skip if the marker requires an extra
-            if "extra ==" in marker_str or "extra ==" in marker_str:
+            if "extra ==" in marker_str or "extra ==" in marker_str or "extra==" in marker_str:
                 continue
 
-        deps.append(req.name.lower())
+        deps.append(normalize_name(req.name))
 
     return deps
 
@@ -68,7 +74,7 @@ def load_deps(path: Path) -> dict[str, list[str]]:
     with open(path, newline="") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            name = row["name"].strip().lower()
+            name = normalize_name(row["name"].strip())
             # Support both old ("requires_dist") and new ("deps") column names
             raw_deps = row.get("deps") or row.get("requires_dist", "")
             requires = parse_requires_dist(raw_deps)

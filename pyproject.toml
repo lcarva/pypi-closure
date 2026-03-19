@@ -14,3 +14,10 @@ test = [
     "pytest>=8.0",
     "responses>=0.25",
 ]
+
+[tool.setuptools]
+py-modules = []
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"

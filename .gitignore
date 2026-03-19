@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+data/
+report/
+*.egg-info/
+
+# Leftover files from manual exploration
+downloads_linux_cp312.csv
+deps_latest.csv

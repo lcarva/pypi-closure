@@ -1,0 +1,16 @@
+[project]
+name = "pypi-analysis"
+version = "0.1.0"
+description = "Analyze PyPI package downloads to find minimum rebuild sets"
+requires-python = ">=3.12"
+dependencies = [
+    "requests>=2.31",
+    "packaging>=24.0",
+    "pandas>=2.1",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8.0",
+    "responses>=0.25",
+]

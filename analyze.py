@@ -36,6 +36,7 @@ def load_downloads(path: Path) -> pd.DataFrame:
     """Load download counts CSV into a DataFrame."""
     df = pd.read_csv(path)
     df.columns = ["project", "downloads"]
+    df = df.dropna(subset=["project"])
     df["project"] = df["project"].str.strip().apply(normalize_name)
     df = df.groupby("project", as_index=False)["downloads"].sum()
     df = df.sort_values("downloads", ascending=False).reset_index(drop=True)

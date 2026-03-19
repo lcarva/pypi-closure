@@ -158,7 +158,7 @@ def generate_report(results: list[dict], downloads: pd.DataFrame, output_path: P
     lines = [
         "# PyPI Minimum Rebuild Set Analysis",
         "",
-        f"**Total downloads (Linux + cp312, last 30 days):** {total:,.0f}",
+        f"**Total downloads (Linux + cp312 and pure-Python, last 30 days):** {total:,.0f}",
         f"**Total packages with downloads:** {len(downloads):,}",
         "",
         "## Coverage Summary",

@@ -11,13 +11,16 @@ CLICKHOUSE_URL = "https://sql-clickhouse.clickhouse.com/"
 CLICKHOUSE_PARAMS = {"user": "demo"}
 DATA_DIR = Path(__file__).parent / "data"
 
-# Downloads: all packages on Linux + Python 3.12 in the last 30 days
+# Downloads: packages on Linux + Python 3.12, plus pure-Python (universal) wheels,
+# in the last 30 days.
 DOWNLOADS_QUERY = """\
 SELECT project, count() AS downloads
 FROM pypi.pypi
-WHERE system = 'Linux'
-  AND python_minor = '3.12'
-  AND date >= today() - 30
+WHERE date >= today() - 30
+  AND (
+    (system = 'Linux' AND python_minor = '3.12')
+    OR (system = '' AND python_minor = '')
+  )
 GROUP BY project
 ORDER BY downloads DESC
 FORMAT CSVWithNames
@@ -58,7 +61,7 @@ def query_clickhouse(sql: str, timeout: int = 600) -> str:
 
 def fetch_downloads(output_path: Path) -> list[str]:
     """Fetch download counts and write to CSV. Returns list of package names."""
-    print("Fetching download counts (Linux + cp312, last 30 days)...")
+    print("Fetching download counts (Linux + cp312 and pure-Python, last 30 days)...")
     text = query_clickhouse(DOWNLOADS_QUERY)
     output_path.write_text(text)
 

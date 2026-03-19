@@ -33,6 +33,12 @@ Download statistics and dependency metadata come from
 [ClickPy](https://clickpy.clickhouse.com/), a free public ClickHouse database
 of PyPI download logs. No BigQuery billing account is required.
 
+**Note:** The fetched `data/downloads.csv` will contain ~39,000 packages, far
+fewer than the hundreds of thousands listed on PyPI. This is expected — the
+query only returns packages with at least one download in the selected time
+window (Linux, Python 3.12, last 30 days). The majority of PyPI packages are
+abandoned, empty, or test uploads with zero recent downloads and are excluded.
+
 ## Setup
 
 ```

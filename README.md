@@ -39,41 +39,20 @@ query only returns packages with at least one download in the selected time
 window (Linux, Python 3.12, last 30 days). The majority of PyPI packages are
 abandoned, empty, or test uploads with zero recent downloads and are excluded.
 
-## Setup
-
-```
-python3 -m venv .venv
-.venv/bin/pip install .          # runtime dependencies
-.venv/bin/pip install '.[test]'  # include test dependencies
-```
-
 ## Usage
 
-**Step 1: Fetch data**
-
 ```
-.venv/bin/python fetch_data.py
-```
-
-Queries ClickPy for:
-- Per-package download counts (Linux + Python 3.12, last 30 days)
-- Dependency metadata (latest version of each package)
-
-Saves results to `data/downloads.csv` and `data/deps.csv`.
-
-**Step 2: Analyze**
-
-```
-.venv/bin/python analyze.py
+make run    # fetch data from ClickPy, then run analysis (sets up venv automatically)
+make fetch  # fetch data only
+make analyze  # run analysis only
+make test   # run tests
+make clean  # remove venv and generated files
 ```
 
-Reads the CSVs, builds the dependency graph, computes transitive closures at
-80/90/95% coverage thresholds, and writes:
+`make run` does everything end-to-end: creates a virtualenv, installs
+dependencies, fetches data, and runs the analysis.
+
+**Outputs:**
+- `data/downloads.csv`, `data/deps.csv` — raw data from ClickPy
 - `report/results.md` — human-readable report
 - `report/80_coverage.txt`, `report/90_coverage.txt`, `report/95_coverage.txt` — machine-readable package lists (one package per line) containing the full closure for each threshold
-
-**Run tests**
-
-```
-PYTHONPATH=. .venv/bin/pytest tests/ -v
-```

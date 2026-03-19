@@ -9,19 +9,11 @@ PyPI Minimum Rebuild Set Analysis — determines the smallest dependency-complet
 ## Commands
 
 ```bash
-# Setup
-python3 -m venv .venv
-.venv/bin/pip install .           # runtime deps
-.venv/bin/pip install '.[test]'   # include test deps
-
-# Fetch data from ClickPy (writes data/downloads.csv, data/deps.csv)
-.venv/bin/python fetch_data.py
-
-# Run analysis (reads data/, writes report/)
-.venv/bin/python analyze.py
-
-# Run tests
-PYTHONPATH=. .venv/bin/pytest tests/ -v
+make run       # fetch data + run analysis (sets up venv automatically)
+make fetch     # fetch data only
+make analyze   # run analysis only
+make test      # run tests
+make clean     # remove venv and generated files
 ```
 
 ## Architecture
